@@ -7,15 +7,12 @@
 # 
 # 5 min for 400 epochs
 
-# import graphlab
 import pandas as pd
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 import time
-
-# df = graphlab.SFrame('train.csv')
 
 class DataSet(object):
 	def __init__(self, images, labels):
@@ -27,10 +24,6 @@ class DataSet(object):
 		self._labels = labels
 		self._epochs_completed = 0
 		self._index_in_epoch = 0
-		# assert images.shape[3] == 1
-		# images = images.reshape(
-		# 	images.shape[0],
-		# 	images.shape[1] * images.shape[2])
 	@property
 	def images(self):
 	  return self._images
@@ -71,20 +64,21 @@ def load(test=False, valid=-0.0):
 		pass
 	def str2img(s):
 		return np.fromstring(s, sep=' ') / 255.0
-	def centralize(y):
-		y = (y - 48) / 48	# coordinate scaled to [-1, 1]
-		return y
+	# def centralize(y):
+	# 	y = (y - 48) / 48	# coordinate scaled to [-1, 1]
+	# 	# y = y / 96
+	# 	return y
 	df = pd.read_csv('training.csv')
 	cols = df.columns[:-1]
 	dataset = Datasets()
-	# for col in df.column_names()[:-1]:
-	# for col in cols:
-	# 	print '%25s: %4d' % (col, df[col].dropna().size())
+
 	df['Image'] = df['Image'].apply(str2img)
 	df = df.dropna()		# [TODO] Currently dropped, but hopefully they can be reused
-	X  = np.vstack(df['Image']) / 255.0
+
+	X  = np.vstack(df['Image'])
 	if not test:
-		y = (df[cols].values -48) / 48.0
+		# y = (df[cols].values -48) / 48.0
+		y = df[cols].values / 96.0
 		X, y = shuffle(X, y)
 	else:
 		y = None
@@ -92,34 +86,33 @@ def load(test=False, valid=-0.0):
 		n = int(valid * len(X))
 		dataset.valid = DataSet(X[:n], y[:n])
 		dataset.train = DataSet(X[n:], y[n:])
-		# dataset.xvalid = X[:n]
-		# dataset.xtrain = X[n:]
-		# dataset.yvalid = y[:n]
-		# dataset.ytrain = y[n:]
 	else:
 		dataset.train = DataSet(X, y)
-		# dataset.xtrain = X
-		# dataset.ytrain = y
 	return dataset
 
 """
   img: a vector of 96*96 length
 label: a vector of 30 targets
 """
+# def show_img_keypoint(img, label, truth=None):
+# 	plt.imshow(img.reshape((96, 96)), cmap='gray')
+# 	plt.scatter(label[0::2] * 48 + 48, label[1::2] * 48 + 48)
+# 	if truth is not None:
+# 		plt.scatter(truth[0::2] * 48 + 48, truth[1::2] * 48 + 48, c='r', marker='x')
+# 	plt.show()
 def show_img_keypoint(img, label, truth=None):
 	plt.imshow(img.reshape((96, 96)), cmap='gray')
-	plt.scatter(label[0::2] * 48 + 48, label[1::2] * 48 + 48)
+	plt.scatter(label[0::2] * 96, label[1::2] * 96)
 	if truth is not None:
-		plt.scatter(truth[0::2] * 48 + 48, truth[1::2] * 48 + 48, c='r', marker='x')
+		plt.scatter(truth[0::2] * 96, truth[1::2] * 96, c='r', marker='x')
 	plt.show()
 
-
-def weight_variable(shape, std=0.0):
+def weight_variable(shape, std=0.1):
 	w_initial = tf.truncated_normal(shape, stddev=std)
 	return tf.Variable(w_initial)
 
 def bias_variable(shape):
-	b_initial = tf.constant(0.0, shape=shape)
+	b_initial = tf.constant(0.1, shape=shape)
 	return tf.Variable(b_initial)
 
 def conv2d(x, W):
@@ -139,7 +132,7 @@ if __name__ == '__main__':
 	iDim = 96*96
 	hDim = 100
 	oDim = 30
-	n_epoch = 400
+	n_epoch = 2000
 	BATCH_SIZE = 128
 
 	x  = tf.placeholder("float", shape=[None, iDim])
@@ -148,23 +141,24 @@ if __name__ == '__main__':
 	x  = tf.placeholder("float", shape=[None, iDim])
 	y_ = tf.placeholder("float", shape=[None, oDim])
 
-	W  = tf.Variable(
+	W1 = tf.Variable(
 		tf.truncated_normal(
-			[iDim, hDim], stddev=1.0/iDim))
-	b  = tf.Variable(tf.constant(0.1, shape=[hDim]))
-	y1 = tf.nn.relu(tf.matmul(x, W) + b)
+			[iDim, hDim], stddev=np.sqrt(1.0/iDim)))
+	b1 = tf.Variable(tf.constant(0.0, shape=[hDim]))
+	y1 = tf.nn.relu(tf.matmul(x, W1) + b1)
 
 	W2 = tf.Variable(
 		tf.truncated_normal(
-			[hDim, oDim], stddev=1.0/hDim))
-	b2 = tf.Variable(tf.constant(0.1, shape=[oDim]))
-	y  = tf.matmul(y1, W2) + b2   # tf.nn.softmax(
+			[hDim, oDim], stddev=np.sqrt(1.0/hDim)))
+	b2 = tf.Variable(tf.constant(0.0, shape=[oDim]))
+	y  = tf.matmul(y1, W2) + b2
 
 	loss = tf.reduce_mean(
 			tf.reduce_sum(
 			tf.square(y - y_), 1))
 
-	train_step = tf.train.AdamOptimizer(1e-2).minimize(loss)
+	train_step = tf.train.AdamOptimizer(5e-3).minimize(loss)
+	# train_step = tf.train.MomentumOptimizer(1e-4, 0.95).minimize(loss)
 
 	init = tf.initialize_all_variables()
 	sess = tf.InteractiveSession()
@@ -173,8 +167,10 @@ if __name__ == '__main__':
 	loss_train_record = list() # np.zeros(n_epoch)
 	loss_valid_record = list() # np.zeros(n_epoch)
 	start_time = time.gmtime()
+	# for i in range(n_epoch):
 	while dataset.train.epochs_completed < n_epoch:
 		batch = dataset.train.next_batch(BATCH_SIZE)
+	# 	feeds = {x: batch[0], y_: batch[1]}
 		train_step.run(feed_dict={x: batch[0], y_: batch[1]})
 		loss_train = sess.run(loss, feed_dict={x: batch[0], y_: batch[1]})
 		loss_valid = sess.run(loss, feed_dict={x: dataset.valid.images, y_: dataset.valid.labels})
@@ -189,6 +185,7 @@ if __name__ == '__main__':
 	print time.strftime('%H:%M:%S', start_time)
 	print time.strftime('%H:%M:%S', end_time)
 
+	# Show an example of comparison
 	i = 0
 	img = dataset.valid.images[i]
 	lab_y = dataset.valid.labels[i]
