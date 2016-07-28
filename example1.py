@@ -2,8 +2,8 @@
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from fkp_input import load_train_set, BatchRenderer
-from model1 import SingleHiddenNN
+from readers.fkp_input import load_train_set, BatchRenderer
+from models.model1 import SingleHiddenNN
 
 '''
 訓練了 400 epoch 後，我們的 validation error 大約在 4e-3

@@ -54,7 +54,7 @@ def centralize_coordinate(x):
 """
 Convert data into Numpy format
 """
-def load_train_set(filename='training.csv', valid=0.0, dim=2):
+def load_train_set(filename='data/training.csv', valid=0.0, dim=2):
     # Python 中，class 只不過是 dict，只是存取內容的方式改成用 "."
     assert dim == 2 or dim == 4, \
         'Dim can only be 2 (as vectors) or 4 (as w-h-c images)'

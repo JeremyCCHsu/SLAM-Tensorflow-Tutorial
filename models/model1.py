@@ -57,7 +57,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 # from util import show_img_keypoint
-from util import full_layer, config
+from utils.layers import full_layer, config
 
 class IModel(object):
     def train(self, x):
