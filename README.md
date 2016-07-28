@@ -1,6 +1,6 @@
 # Tensorflow Tutorial for the SLAM Group
 
-1. 詳細內容請參考 *.ipynb files
+1. 詳細內容請參考 *.ipynb and *md files 
 2. 下載此 repository 之後，請從這邊下載dataset
 [Kaggle Facial Keypoint](https://www.kaggle.com/c/facial-keypoints-detection)
 3. 我寫這篇 tutorial 並非以做出一個好的 facial keypoint detector 為訴求

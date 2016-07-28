@@ -2,8 +2,8 @@
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from fkp_input import load_train_set, BatchRenderer
-from model3 import CNN
+from readers.fkp_input import load_train_set, BatchRenderer
+from models.model3 import CNN
 
 '''
 訓練了 400 epoch 後，我們的 validation error 大約在 4e-3
