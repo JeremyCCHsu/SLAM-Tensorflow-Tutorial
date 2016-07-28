@@ -97,3 +97,6 @@ Note:
 2. [SSH Tunnel 一般场景用法](http://blog.csdn.net/wxqee/article/details/49234595)
 3. [SSH原理与运用（二）：远程操作与端口转发](http://www.ruanyifeng.com/blog/2011/12/ssh_port_forwarding.html)
 4. [The Black Magic Of SSH: SSH Can Do That?](https://vimeo.com/54505525)
+
+### Miscellaneous Resources
+1. [Running Jupyter Notebook Server](http://jupyter-notebook.readthedocs.io/en/latest/public_server.html#notebook-public-server)
