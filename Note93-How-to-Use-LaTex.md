@@ -1,7 +1,6 @@
 
 # Latex文章範本
-https://www.overleaf.com/10014244fptfvryvvcky  
-這裡的東西你隨便改沒關係  
+https://www.overleaf.com/10001186xqfdpvtmygpx#/36769147
 
 # 幾個超推薦的重點
 1. 不必管理字型  
@@ -64,6 +63,14 @@ Syntax: `\newcommand{指令縮寫}[變數數量] {實際形式}`
 `\newcommand{\E}[2] {\mathbb{E}_{#1}\big[ #2 \big]}`
 這是定義一個「有大一點的中括號的期望值符號」。  
 
+#### Overriding (推翻之前定義過的符號)
+如果你要定義某個已經被定義過的變數(也就是內建的變數)，請使用 `renewcommand`
+e.g.  
+```tex
+\renewcommand{\xi} {x_i}
+```
+
+
 
 ## 參考資料
 要引用別人的文章前，你需要編輯一個 `*.bib` 檔。  
@@ -111,20 +118,48 @@ Syntax: `\newcommand{指令縮寫}[變數數量] {實際形式}`
 (但是一般來說，我不會特別去改這串字)
 
 ### 參看 (本文中有出現的編號項目)
+在會被參考的圖、表、段落下加入 `\label{}` 來做標記 (填入暱稱)。  
+之後，在段落中使用 `ref{}` 來引述該標記。  
+Note:
+  1. 這個功能和「引用」其實很像。  
+  2. 暱稱可以是任何字串，所以可以用冒號、等號、加號等等  
+  3. 一般會建議依據參考的內容來給予暱稱，例如 `sec:xx, eq:xx, fig:xx, tab:xx`  
+
+e.g.  
+```tex
+\section{Introduction}
+\label{sec:intro}
+...
+
+
+\section{Experiment}
+As we have described in Sec. \ref{sec:intro},
+```
 
 
 ## 方程式
+
 ### 段落中的方程式 (Inline functions)
+用成對的錢字號圍起來，例如  
+```tex
+Note that $w$ is the weight vector.
+```
+
 ### 單獨成行的方程式
+用 begin-end pair 所建立的 equation environment 圍起來，例如
+```tex
+\begin{equation}
+  A = B + C
+\end{equation}
+```
+
 ### 符號自定義
+這和前面講的「自定義指令」完全相同。
 
-
-
-### 
 
 ## 範本裡面已經做了的 (所以你這次不需要做)
 
 ### Include packages
-
-###
+Syntax: `\usepackage{}`  
+注意這一定要在文章最開頭，不能在文章開始之後才 include 
 
